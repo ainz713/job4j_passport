@@ -1,6 +1,9 @@
 package ru.job4j.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.Objects;
 
@@ -12,10 +15,12 @@ public class Passport {
     private int id;
     private String seria;
     private String nomer;
-    private Calendar dateOfIssue;
-    private Calendar expDate;
+    @JsonFormat(pattern = "dd-MM-yyyy")
+    private LocalDate dateOfIssue;
+    @JsonFormat(pattern = "dd-MM-yyyy")
+    private LocalDate expDate;
 
-    public static Passport of(String seria, String nomer, Calendar dateOfIssue, Calendar expDate) {
+    public static Passport of(String seria, String nomer, LocalDate dateOfIssue, LocalDate expDate) {
         Passport passport = new Passport();
         passport.seria = seria;
         passport.nomer = nomer;
@@ -48,26 +53,30 @@ public class Passport {
         this.nomer = nomer;
     }
 
-    public Calendar getDateOfIssue() {
+    public LocalDate getDateOfIssue() {
         return dateOfIssue;
     }
 
-    public void setDateOfIssue(Calendar dateOfIssue) {
+    public void setDateOfIssue(LocalDate dateOfIssue) {
         this.dateOfIssue = dateOfIssue;
     }
 
-    public Calendar getExpDate() {
+    public LocalDate getExpDate() {
         return expDate;
     }
 
-    public void setExpDate(Calendar expDate) {
+    public void setExpDate(LocalDate expDate) {
         this.expDate = expDate;
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         Passport passport = (Passport) o;
         return id == passport.id;
     }
