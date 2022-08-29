@@ -1,6 +1,10 @@
 package ru.job4j.repository;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.client.RestTemplateBuilder;
+
+import org.springframework.context.annotation.Configuration;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -15,13 +19,14 @@ import java.util.List;
 @Repository
 public class TrackerAPIStore implements Store {
 
-    @Value("${http://localhost:8080/}")
+    @Value("${api.url}")
     private String url;
 
     private final RestTemplate client;
 
-    public TrackerAPIStore(RestTemplate client) {
-        this.client = client;
+    @Autowired
+    public TrackerAPIStore(RestTemplateBuilder builder) {
+        this.client = builder.build();
     }
 
     @Override

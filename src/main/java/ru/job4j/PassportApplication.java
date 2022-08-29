@@ -9,10 +9,6 @@ import org.springframework.web.client.RestTemplate;
 
 @SpringBootApplication
 public class PassportApplication extends SpringBootServletInitializer {
-    @Bean
-    public RestTemplate getTemplate() {
-        return new RestTemplate();
-    }
 
     @Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
