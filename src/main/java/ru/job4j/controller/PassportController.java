@@ -3,8 +3,10 @@ package ru.job4j.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import ru.job4j.domain.Passport;
@@ -23,6 +25,9 @@ public class PassportController {
     private final ObjectMapper objectMapper;
 
     private final PassportRepository pr;
+
+    @Autowired
+    private KafkaTemplate<Integer, String> kafkaTemplate;
 
     public PassportController(ObjectMapper objectMapper, final PassportRepository pr) {
         this.objectMapper = objectMapper;
@@ -57,8 +62,14 @@ public class PassportController {
     }
 
     @GetMapping("/find-replaceable")
-    public ResponseEntity<List<Passport>> findReplaceable() {
+    public ResponseEntity<List<Passport>> findReplaceable(Integer msgId, String msg) {
         List<Passport> rsl = this.pr.findRepalceable(LocalDate.now().plusMonths(3));
+        if (!rsl.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "There are no replaceable passports.");
+        } else {
+            kafkaTemplate.send("email_send", msgId, msg);
+        }
         return new ResponseEntity<>(
                 rsl,
                 HttpStatus.OK
@@ -88,7 +99,6 @@ public class PassportController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     "Check id and full information about new passport.");
         }
-
         return ResponseEntity.ok().build();
     }
 

@@ -9,6 +9,8 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.client.RestTemplate;
 import ru.job4j.domain.Passport;
@@ -16,6 +18,7 @@ import ru.job4j.domain.Passport;
 import java.util.Collections;
 import java.util.List;
 
+@EnableScheduling
 @Repository
 public class TrackerAPIStore implements Store {
 
@@ -43,8 +46,9 @@ public class TrackerAPIStore implements Store {
         ));
     }
 
+    @Scheduled(fixedDelay = 5000)
     @Override
-    public List<Passport>  findReplaceable() {
+    public List<Passport> findReplaceable() {
         return getList(String.format(
                 "%sfind-replaceable", url
         ));
